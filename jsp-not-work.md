@@ -85,92 +85,80 @@ Spring Boot 3 uses Jakarta EE instead of Java EE, so dependencies must be correc
 </dependencies>
 ```
 
-### **2. Configure `application.properties` for JSP View Resolver**
+### **Intermittent Issues and Their Solutions**
 
-```properties
-spring.mvc.view.prefix=/views/
-spring.mvc.view.suffix=.jsp
-```
+1. **Maven Dependencies Not Properly Loaded**
 
-Ensure your `JSP` files are inside `src/main/webapp/views/`.
+   - **Issue:** Sometimes, dependencies may not be resolved properly, leading to `ClassNotFoundException`.
+   - **Solution:** Run:
+     ```sh
+     mvn clean
+     mvn install
+     ```
+     This will ensure all dependencies are reloaded correctly.
 
-### **3. Set Up the Controller**
+2. **Cached JSP Files Causing Errors**
 
-Create `JobController.java` under `com.telusko.JobApp.controller`.\
-This is demo code replace with Github code of Job portal.
+   - **Issue:** Tomcat may cache older JSP files, causing inconsistencies.
+   - **Solution:** Try deleting the `target/` folder and restart the application:
+     ```sh
+     mvn clean package
+     ```
 
-```java
-package com.telusko.JobApp.controller;
+3. **Java Version Mismatch**
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+   - **Issue:** Java version conflicts, especially if you are using a different JDK than specified in `pom.xml`.
+   - **Solution:** Verify Java version with:
+     ```sh
+     java -version
+     ```
+     Ensure it matches the version in `pom.xml` (Java 21 in your case).
 
-@Controller
-public class JobController {
-    @GetMapping("/home")
-    public String home() {
-        return "home"; // home.jsp
-    }
-}
-```
+4. **Missing or Incorrect Deployment of JSP Files**
 
-### **4. Ensure `home.jsp` Exists in `src/main/webapp/views/`**
+   - **Issue:** JSP files may not be correctly placed in `src/main/webapp/views/`.
+   - **Solution:** Ensure that all JSP files exist and match the configurations in `application.properties`:
+     ```properties
+     spring.mvc.view.prefix=/views/
+     spring.mvc.view.suffix=.jsp
+     ```
 
-Create `home.jsp` inside `src/main/webapp/views/`.
+5. **Port Conflict**
 
-This is demo code replace with Github code of Job portal.
+   - **Issue:** If another application is using port `8080`, Spring Boot may fail to start.
+   - **Solution:** Run the application on a different port by adding to `application.properties`:
+     ```properties
+     server.port=8081
+     ```
 
-```jsp
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<html>
-<head>
-    <title>Home Page</title>
-</head>
-<body>
-    <h1>Welcome to the Job Portal</h1>
-</body>
-</html>
-```
+6. **DevTools Hot Reload Issues**
 
-### **5. Adjust `src/main/webapp/WEB-INF/web.xml` (If Required)**
+   - **Issue:** Spring Boot DevTools may not always refresh JSP changes automatically.
+   - **Solution:** Try disabling caching:
+     ```properties
+     spring.thymeleaf.cache=false
+     ```
 
-Spring Boot does not require `web.xml`, but if using an older setup, define a JSP dispatcher:
+7. **Check Logs for Specific Errors**
 
-```xml
-<web-app xmlns="http://java.sun.com/xml/ns/javaee"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
-    version="3.0">
+   - Run:
+     ```sh
+     mvn spring-boot:run
+     ```
+     and check the logs for errors. If you see `org.apache.jasper.JasperException`, it indicates an issue with the JSP compilation.
 
-    <servlet>
-        <servlet-name>dispatcher</servlet-name>
-        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
+8. **Use Embedded Tomcat Correctly**
+   - **Issue:** JSP requires `tomcat-jasper`. If missing, JSP will not compile.
+   - **Solution:** Ensure the following dependency is included:
+     ```xml
+     <dependency>
+         <groupId>org.apache.tomcat</groupId>
+         <artifactId>tomcat-jasper</artifactId>
+         <version>10.1.16</version>
+     </dependency>
+     ```
 
-    <servlet-mapping>
-        <servlet-name>dispatcher</servlet-name>
-        <url-pattern>/</url-pattern>
-    </servlet-mapping>
-</web-app>
-```
-
-### **6. Run the Application**
-
-```sh
-mvn spring-boot:run
-```
-
-OR
-
-```sh
-mvn clean install
-java -jar target/JobApp-0.0.1-SNAPSHOT.jar
-```
-
-### **7. Access in Browser**
-
-- Run `http://localhost:8080/home` to verify the JSP page loads correctly.
+If the problem persists, try **rebuilding the project, restarting your IDE, and running the application from the command line instead of the IDE**.
 
 ### **Common Errors and Solutions**
 
@@ -182,6 +170,4 @@ java -jar target/JobApp-0.0.1-SNAPSHOT.jar
 | `JSTL tags not working`                                         | Ensure correct JSTL dependencies are added                           |
 | `Application fails with java.lang.UnsupportedClassVersionError` | Ensure your Java version is compatible (Java 21 in `pom.xml`)        |
 
-### **Conclusion**
-
-By following these steps, your Spring Boot JSP application should run smoothly. If issues persist, check dependency versions, logs, and ensure that JSP files are correctly placed inside `src/main/webapp/views/`.
+---
