@@ -30,7 +30,7 @@ JobApp-Project/
 
 **Steps to Run Spring Boot with JSP Successfully**
 
-### \*\*1. Ensure Proper Dependencies in \*\***`pom.xml`**
+### **1. Ensure Proper Dependencies in `pom.xml`**
 
 Spring Boot 3 uses Jakarta EE instead of Java EE, so dependencies must be correctly added.
 
@@ -85,7 +85,7 @@ Spring Boot 3 uses Jakarta EE instead of Java EE, so dependencies must be correc
 </dependencies>
 ```
 
-### **2. Configure ****************************`application.properties`**************************** for JSP View Resolver**
+### **2. Configure ************\*\***************`application.properties`************\*\*\*\************* for JSP View Resolver\*\*
 
 ```properties
 spring.mvc.view.prefix=/views/
@@ -114,7 +114,7 @@ public class JobController {
 }
 ```
 
-### \*\*4. Ensure ****`home.jsp`**** Exists in \*\***`src/main/webapp/views/`**
+### \*\*4. Ensure \***\*`home.jsp`\*\*** Exists in \*\***`src/main/webapp/views/`**
 
 Create `home.jsp` inside `src/main/webapp/views/`.
 
@@ -132,7 +132,7 @@ This is demo code replace with Github code of Job portal.
 </html>
 ```
 
-### **5. Adjust ****************************`src/main/webapp/WEB-INF/web.xml`**************************** (If Required)**
+### **5. Adjust ************\*\***************`src/main/webapp/WEB-INF/web.xml`************\*\*\*\************* (If Required)\*\*
 
 Spring Boot does not require `web.xml`, but if using an older setup, define a JSP dispatcher:
 
@@ -185,4 +185,3 @@ java -jar target/JobApp-0.0.1-SNAPSHOT.jar
 ### **Conclusion**
 
 By following these steps, your Spring Boot JSP application should run smoothly. If issues persist, check dependency versions, logs, and ensure that JSP files are correctly placed inside `src/main/webapp/views/`.
-
